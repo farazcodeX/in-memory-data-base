@@ -2,7 +2,7 @@ package db1;
 
 public abstract class Entity {
 
-    public int ID;
+    public int id;
 
     // this is mine
     public boolean entityOn;

@@ -6,26 +6,27 @@ import dbException.*;
 
 
 
-public class DataBase {
+public final class Database {
     
-    private List<Entity> entities;
-    public int idCounter;
+    private static List<Entity> entities = new ArrayList<>();
+    public static int idCounter = 1;
 
-    public DataBase() {
-        entities = new ArrayList<>();
-        idCounter = 1;
-    }
-    public void add(Entity entity) {
+    private Database() {
+       //"Making a class constructor private will prevent the class from being instantiated."
+      // classes like Math in java is like this
         
-        entity.ID = idCounter;
+    }
+    public static void add(Entity entity) {
+        
+        entity.id = idCounter;
 
         ++idCounter;
 
         entities.add(entity);
     }
-    public Entity get(int id) throws EntityNotFoundException {
+    public static Entity get(int id) throws EntityNotFoundException {
         for(Entity entity : entities) {
-            if(entity.ID == id) {
+            if(entity.id == id) {
                 return entity;
             }
         }
@@ -33,10 +34,10 @@ public class DataBase {
         throw new EntityNotFoundException();
         
     }
-    public void delete(int id) throws EntityNotFoundException {
+    public static void delete(int id) throws EntityNotFoundException {
 
         for(Entity entity : entities) {
-            if(entity.ID == id) {
+            if(entity.id == id) {
                 entities.remove(entity);
                 return;
             }
@@ -47,9 +48,9 @@ public class DataBase {
 
     }
     // i dont recommend this update (your way)
-    public void update(Entity e) throws EntityNotFoundException {
+    public static void update(Entity e) throws EntityNotFoundException {
         for (int i = 0; i < entities.size(); i++) {
-            if (entities.get(i).ID == e.ID) {
+            if (entities.get(i).id == e.id) {
                 entities.set(i, e); 
                 return; 
             }
