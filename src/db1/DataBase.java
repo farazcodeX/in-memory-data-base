@@ -20,12 +20,12 @@ public final class Database {
         
         entity.id = idCounter;
         ++idCounter;
-        entities.add(entity);
+        entities.add(entity.copy());
     }
     public static Entity get(int id) throws EntityNotFoundException {
         for(Entity entity : entities) {
             if(entity.id == id) {
-                return entity;
+                return entity.copy();
             }
         }
         // if entity not found
@@ -49,7 +49,7 @@ public final class Database {
     public static void update(Entity e) throws EntityNotFoundException {
         for (int i = 0; i < entities.size(); i++) {
             if (entities.get(i).id == e.id) {
-                entities.set(i, e); 
+                entities.set(i, e.copy()); 
                 return; 
             }
         }
