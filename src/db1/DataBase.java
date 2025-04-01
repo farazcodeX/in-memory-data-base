@@ -19,9 +19,7 @@ public final class Database {
     public static void add(Entity entity) {
         
         entity.id = idCounter;
-
         ++idCounter;
-
         entities.add(entity);
     }
     public static Entity get(int id) throws EntityNotFoundException {
