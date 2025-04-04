@@ -1,6 +1,7 @@
 package db1;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import dbException.*;
 
@@ -10,6 +11,7 @@ public final class Database {
     
     private static List<Entity> entities = new ArrayList<>();
     public static int idCounter = 1;
+    private static HashMap<Integer, Validator> validators;
 
     private Database() {
        //"Making a class constructor private will prevent the class from being instantiated."
@@ -56,7 +58,14 @@ public final class Database {
 
         // if not found
        throw new EntityNotFoundException();
-      
+    }
+    public static void registerValidator(int entityCode, Validator validator) {
+        if (validators.containsKey(entityCode)) {
+            throw new IllegalArgumentException("validator for entity code " + entityCode + " already exists.");
+        } else {
+             validators.put(entityCode, validator);
+        }
+       
         
     }
 
