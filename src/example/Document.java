@@ -10,7 +10,7 @@ public class Document extends Entity implements Trackable{
     private Date creationDate;
     private Date lastModificationDate;
     public static final int DOCUMENT_ENTITY_CODE = 69;
-    String content;
+    public String content;
 
     public Document(String content) {
         this.content = content;
@@ -20,6 +20,14 @@ public class Document extends Entity implements Trackable{
     public Entity copy() {
         Document docCopy = new Document(content);
         docCopy.id = id;
+        if(creationDate != null) {
+            docCopy.setCreationDate(new Date(this.creationDate.getTime()));
+             if(lastModificationDate != null) {
+                docCopy.setLastModificationDate(new Date(this.lastModificationDate.getTime()));
+             }
+        }
+        
+        
 
         return docCopy;
     }

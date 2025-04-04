@@ -27,6 +27,7 @@ public final class Database {
         if(entity instanceof Trackable) {
             Date date = new Date(System.currentTimeMillis());
             ((Trackable) entity).setCreationDate(date);
+            ((Trackable) entity).setLastModificationDate(date);
         }
 
 
