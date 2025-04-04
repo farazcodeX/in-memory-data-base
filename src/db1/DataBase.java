@@ -1,6 +1,7 @@
 package db1;
 
 import java.util.ArrayList;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import dbException.*;
@@ -18,11 +19,18 @@ public final class Database {
       // classes like Math in java is like this
         
     }
-    public static void add(Entity entity) {
-        
+    public static void add(Entity entity) { 
         entity.id = idCounter;
         ++idCounter;
         entities.add(entity.copy());
+
+        if(entity instanceof Trackable) {
+            Date date = new Date(System.currentTimeMillis());
+            ((Trackable) entity).setCreationDate(date);
+            ((Trackable) entity).setLastModificationDate(date);
+        }
+
+
     }
     public static Entity get(int id) throws EntityNotFoundException {
         for(Entity entity : entities) {
@@ -52,6 +60,11 @@ public final class Database {
         for (int i = 0; i < entities.size(); i++) {
             if (entities.get(i).id == e.id) {
                 entities.set(i, e.copy()); 
+
+                if(e instanceof Trackable) {
+                    Date date = new Date(System.currentTimeMillis());
+                    ((Trackable) e).setLastModificationDate(date);
+                }
                 return; 
             }
         }
