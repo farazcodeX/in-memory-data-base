@@ -1,6 +1,7 @@
 package db1;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import dbException.*;
@@ -23,6 +24,10 @@ public final class Database {
         entity.id = idCounter;
         ++idCounter;
         entities.add(entity.copy());
+
+        if (entity instanceof Trackable) {
+            
+        }
     }
     public static Entity get(int id) throws EntityNotFoundException {
         for(Entity entity : entities) {
