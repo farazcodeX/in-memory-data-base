@@ -81,6 +81,20 @@ public final class Database {
        
         
     }
+    public static ArrayList<Entity> getAll(int entityCode) {
+        // return all the entities with specified entityCode
+        ArrayList<Entity> newList = new ArrayList<>();
+        for(Entity entity : entities) {
+            if(entity.getEntityCode() == entityCode) {
+                newList.add(entity.copy());
+            }
+        }
+        return newList;
+        
+        
+       
+    }
+    
 
 
     
