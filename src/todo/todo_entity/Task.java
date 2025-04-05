@@ -16,6 +16,14 @@ public class Task extends Entity implements Trackable {
     public String description;
     public Date dueDate;
 
+    public Task(String title, String des, Date date, Status status) {
+        this.title = title;
+        this.description = des;
+        this.dueDate = date;
+        this.status = status;
+
+    }
+
 
     public enum Status {
         NoStarted, InProgres, Completed
@@ -28,7 +36,7 @@ public class Task extends Entity implements Trackable {
 
     @Override
     public Date getCreationDate() {
-        return creationDate;
+            return creationDate;
     }
 
     @Override
@@ -42,9 +50,17 @@ public class Task extends Entity implements Trackable {
     }
 
     @Override
-    public Entity copy() {
-        return null;
-
+    public Task copy() {
+        Task taskCopy = new Task(title, description, creationDate, status);
+        taskCopy.id = id;
+        if(creationDate != null) {
+            taskCopy.setCreationDate(new Date(this.creationDate.getTime()));
+             if(lastModificationDate != null) {
+                taskCopy.setLastModificationDate(new Date(this.lastModificationDate.getTime()));
+             }
+        }
+        return taskCopy;
+        
     }
 
     @Override

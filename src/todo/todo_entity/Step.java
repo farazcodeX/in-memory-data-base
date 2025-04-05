@@ -3,10 +3,17 @@ package todo_entity;
 import db1.Entity;
 
 public class Step extends Entity{
+    private final int STEP_ENTITY_CODE = 8;
     public String title;
     public Status status;
     // task id
     public int taskRef;
+
+    public Step(String name, Status status, int taskRef) {
+        this.taskRef = taskRef;
+        this.status = status;
+        this.title = name;
+    }
 
     public enum Status {
         NoStarted, Completed
@@ -14,13 +21,13 @@ public class Step extends Entity{
 
     @Override
     public Entity copy() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'copy'");
+        Step stepCopy = new Step(title, status, taskRef);
+
+       return stepCopy;
     }
 
     @Override
     public int getEntityCode() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getEntityCode'");
+        return STEP_ENTITY_CODE;
     }
 }

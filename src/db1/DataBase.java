@@ -1,6 +1,7 @@
 package db1;
 
 import java.util.ArrayList;
+import java.lang.annotation.ElementType;
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +12,6 @@ import dbException.*;
 public final class Database {
     
     private static List<Entity> entities = new ArrayList<>();
-    public static int idCounter = 1;
     private static HashMap<Integer, Validator> validators;
 
     private Database() {
@@ -20,8 +20,7 @@ public final class Database {
         
     }
     public static void add(Entity entity) { 
-        entity.id = idCounter;
-        ++idCounter;
+        
         entities.add(entity.copy());
 
         if(entity instanceof Trackable) {
@@ -89,13 +88,11 @@ public final class Database {
                 newList.add(entity.copy());
             }
         }
-        return newList;
-        
-        
-       
+        if(!(newList.isEmpty())) {
+            return newList;
+        } else {
+            throw new EntityNotFoundException();
+        }  
     }
-    
 
-
-    
 }
