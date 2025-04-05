@@ -13,7 +13,7 @@ public class Main {
         System.out.println("Document added");
     
         System.out.println("id: " + doc.id);
-        System.out.println("content: " + doc.content);
+        System.out.println("content: " + doc.content); 
         System.out.println("creation date: " + doc.getCreationDate());
         System.out.println("last modification date: " + doc.getLastModificationDate());
         System.out.println();
@@ -34,4 +34,6 @@ public class Main {
         System.out.println("creation date: " + doc.getCreationDate());
         System.out.println("last modification date: " + doc.getLastModificationDate());
     }
+
+
 }
