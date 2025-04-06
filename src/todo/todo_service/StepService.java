@@ -65,7 +65,7 @@ public class StepService {
     }
 
     
-    public static void updateStep() throws InvalidEntityException {
+    public static void updateStep() {
         System.out.println("\n----------------------------");
         System.out.print("Enter Step ID: ");
         int id = scanner.nextInt();

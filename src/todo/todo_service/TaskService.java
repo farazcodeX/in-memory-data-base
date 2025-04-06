@@ -51,7 +51,7 @@ public class TaskService {
         }
     }
 
-    public static void updateTask() throws InvalidEntityException {
+    public static void updateTask() {
         System.out.println("----------------------------");
         System.out.print("Enter Task ID: ");
         int id = scanner.nextInt();
@@ -59,7 +59,7 @@ public class TaskService {
 
         Entity entity = Database.get(id);
         if (!(entity instanceof Task)) {
-            throw new InvalidEntityException("Invalid ID provided. Entity is not a Task.");
+            System.out.println("Invalid ID provided. Entity is not a Task.");
         }
 
         Task task = (Task) entity;
@@ -118,6 +118,8 @@ public class TaskService {
                 System.out.println("Task updated successfully.");
             } catch (EntityNotFoundException e) {
                 System.out.println("Update failed: Task not found.");
+            } catch(InvalidEntityException e) {
+                System.out.println("Update failed");
             }
         }
     }

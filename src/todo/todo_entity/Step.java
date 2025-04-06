@@ -3,7 +3,9 @@ package todo_entity;
 import db1.Entity;
 
 public class Step extends Entity{
-    private final int STEP_ENTITY_CODE = 8;
+    
+        
+    public static final int STEP_ENTITY_CODE = 8;
     public String title;
     public Status status;
     // task id
