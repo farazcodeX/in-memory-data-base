@@ -19,17 +19,14 @@ public class StepValidator implements Validator{
         }
         // down Cast
         Step step = (Step)entity;
-        if(step.title.isEmpty()) {
+        if(step.title == null || step.title.trim().isEmpty()) {
             throw new InvalidEntityException("Step title is empty ");
-
         }
         try {
             // it should returns a task if it dont theres no task 
             Database.get(step.taskRef);
         } catch(EntityNotFoundException e) {
-            throw new InvalidEntityException("Invalid Task ID inputed");
+            throw new InvalidEntityException("Invalid Task ID provided");
         }
-        
-        
     }
 }

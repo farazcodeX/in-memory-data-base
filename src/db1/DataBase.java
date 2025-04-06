@@ -24,6 +24,10 @@ public final class Database {
     public static void add(Entity entity) throws InvalidEntityException { 
 
         Validator validator = validators.get(entity.getEntityCode());
+        if(validator == null) {
+            throw new InvalidEntityException("No validator found for this Entity COde : " + entity.getEntityCode() + "\nPossible issue : Validator not added ");
+
+        }
     
         validator.validate(entity);
 
