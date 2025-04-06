@@ -1,5 +1,6 @@
 import db1.Database;
 import dbException.EntityNotFoundException;
+import dbException.InvalidEntityException;
 import example.Document;
 import example.Human;
 import example.HumanValidator;
@@ -8,7 +9,12 @@ public class Main {
     public static void main(String[] args) {
         Document doc = new Document("Eid Eid Eid");
 
-        Database.add(doc);
+        try {
+            Database.add(doc);
+        } catch (InvalidEntityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     
         System.out.println("Document added");
     

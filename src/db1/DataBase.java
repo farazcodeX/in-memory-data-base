@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import dbException.*;
+import todo_entity.Step;
 
 
 
@@ -13,22 +14,26 @@ public final class Database {
     
     private static List<Entity> entities = new ArrayList<>();
     private static HashMap<Integer, Validator> validators;
+    private static int idCounter = 0;
 
     private Database() {
        //"Making a class constructor private will prevent the class from being instantiated."
       // classes like Math in java is like this
-        
+
     }
-    public static void add(Entity entity) { 
-        
-        entities.add(entity.copy());
+    public static void add(Entity entity) throws InvalidEntityException { 
+
+        Validator validator = validators.get(entity.getEntityCode());
+    
+        validator.validate(entity);
 
         if(entity instanceof Trackable) {
             Date date = new Date(System.currentTimeMillis());
             ((Trackable) entity).setCreationDate(date);
             ((Trackable) entity).setLastModificationDate(date);
         }
-
+        entity.id = ++idCounter;
+        entities.add(entity.copy());
 
     }
     public static Entity get(int id) throws EntityNotFoundException {
@@ -93,6 +98,23 @@ public final class Database {
         } else {
             throw new EntityNotFoundException();
         }  
+    }
+    public static ArrayList<Step> getStepsOfTask(int taskRef) {
+        ArrayList<Step> steps = new ArrayList<>();
+        for(Entity entity : entities) {
+            if(entity instanceof Step) {
+                Step step = (Step)entity;
+                if(step.taskRef == taskRef) {
+                    steps.add(step);
+                }
+            }
+        }
+        if(!steps.isEmpty()) {
+            return steps;
+        } 
+        throw new EntityNotFoundException();
+        
+        
     }
 
 }

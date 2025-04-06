@@ -10,16 +10,17 @@ public class TaskValidator implements Validator{
 
     @Override
     public void validate(Entity entity) throws InvalidEntityException {
-        if(!(entity instanceof Step)) {
+        if(!(entity instanceof Task)) {
             throw new InvalidEntityException("Invalid entity inputed");
         }
         // down Cast
-        Step step = (Step)entity;
-        if(step.title.isEmpty()) {
+        Task task = (Task)entity;
+        if(task.title.isEmpty()) {
             throw new InvalidEntityException("Invalid Step entity");
 
         }
-        // checking taskref
+        
+
      }
     
 }
