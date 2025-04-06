@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import dbException.*;
 import todo_entity.Step;
+import todo_entity.Task;
 
 
 
@@ -64,7 +65,14 @@ public final class Database {
 
     }
     // i dont recommend this update (your way)
-    public static void update(Entity e) throws EntityNotFoundException {
+    public static void update(Entity e) throws EntityNotFoundException, InvalidEntityException {
+        Validator validator = validators.get(e.getEntityCode());
+        if(validator == null) {
+            throw new InvalidEntityException("No validator found for this Entity COde : " + e.getEntityCode() + "\nPossible issue : Validator not added ");
+
+        }
+    
+        validator.validate(e);
         for (int i = 0; i < entities.size(); i++) {
             if (entities.get(i).id == e.id) {
                 entities.set(i, e.copy()); 
@@ -118,6 +126,21 @@ public final class Database {
         } 
         throw new EntityNotFoundException();
         
+        
+    }
+    public static ArrayList<Task> getAllTaks() {
+        ArrayList<Task> tasks = new ArrayList<>();
+        for(Entity entity : entities) {
+            if(entity instanceof Task) {
+                Task task = (Task)entity;
+                tasks.add(task);
+            }
+        }
+        if(!tasks.isEmpty()) {
+            return tasks;
+        } else {
+            throw new EntityNotFoundException();
+        }
         
     }
 

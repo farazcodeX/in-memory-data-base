@@ -195,5 +195,47 @@ public class TaskService {
             System.out.println("Error: Failed to delete Task. Entity not found.");
         }
     }
+    public static void getAllTaks() {
+        ArrayList<Task> tasks = null;
+        ArrayList<Step> steps;
+        Boolean hasStep = false;
+        try {
+            tasks = Database.getAllTaks();
+
+        } catch (EntityNotFoundException e) {
+            System.out.println("No Tasks to show");
+            return;
+        }
+        System.out.println("All Tasks : ");
+        for(Task task : tasks) {
+            hasStep = true;
+            try {
+                steps = Database.getStepsOfTask(task.id);
+            } catch (EntityNotFoundException e) {
+                hasStep = false;
+                steps = new ArrayList<>();
+            }
+            
+            
+            System.out.println("---------------");
+            System.out.println("ID       : " + task.id);
+            System.out.println("Title    : " + task.title);
+            System.out.println("Due Date : " + task.dueDate);
+            System.out.println("Status   : " + task.status);
+            if(hasStep) {
+                System.out.println("Steps:");
+                for (Step step : steps) {
+                    System.out.println("+ " + step.title);
+                    System.out.println("   ID     : " + step.id);
+                    System.out.println("   Status : " + step.status);
+                    
+                }
+            } else {
+                System.out.println("    NO steps");
+            }
+
+        }
+
+    }
     
 }

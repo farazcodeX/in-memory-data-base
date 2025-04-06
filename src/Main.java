@@ -32,7 +32,12 @@ public class Main {
     
         doc.content = "This is the new content";
     
-        Database.update(doc);
+        try {
+            Database.update(doc);
+        } catch (EntityNotFoundException | InvalidEntityException e) {
+        
+            e.printStackTrace();
+        }
     
         System.out.println("Document updated");
         System.out.println("id: " + doc.id);
