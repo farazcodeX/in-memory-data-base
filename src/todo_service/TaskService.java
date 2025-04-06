@@ -1,6 +1,8 @@
 package todo_service;
 
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -15,6 +17,9 @@ import todo_entity.Step;
 import todo_entity.Task;
 
 public class TaskService {
+    public enum Condition {
+        all, incompelete
+    }
     static Scanner scanner = new Scanner(System.in);
 
     public static void setAsCompleted(int taskId) throws InvalidEntityException {
@@ -39,9 +44,23 @@ public class TaskService {
         String title = scanner.nextLine();
         System.out.print("Enter Task description: ");
         String description = scanner.nextLine();
+        // lets get the due date
+        System.out.println("Enter due Date in (xxxx-yy-zz) format");
+        String dueDateInput = scanner.nextLine();
+        Date dueDate = null;
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            formatter.setLenient(false);
+            java.util.Date parsedDate = formatter.parse(dueDateInput);
+            dueDate = new Date(parsedDate.getTime()); 
+        } catch (ParseException e) {
+            System.out.println("SomeThing went wrong : possible issue : Invalid date format provided");
+            return;
 
-        Date date = Date.valueOf(LocalDate.now()); // current date
-        Task task = new Task(title, description, date, Task.Status.NoStarted);
+        }
+
+        
+        Task task = new Task(title, description, dueDate, Task.Status.NoStarted);
 
         try {
             Database.add(task);
@@ -90,8 +109,8 @@ public class TaskService {
                     update = true;
                     break;
                 case "status":
-                    System.out.print("Enter new status (NoStarted / InProgres / Completed): ");
-                    String statusInput = scanner.nextLine();
+                    System.out.print("Enter new status (NoStarted / InProgres / Complete): ");
+                    String statusInput = scanner.nextLine().trim().toLowerCase();
                     switch (statusInput) {
                         case "NoStarted":
                             task.status = Task.Status.NoStarted;
@@ -101,7 +120,7 @@ public class TaskService {
                             task.status = Task.Status.InProgres;
                             update = true;
                             break;
-                        case "Completed":
+                        case "Complete":
                             task.status = Task.Status.Completed;
                             update = true;
                             break;
@@ -222,7 +241,7 @@ public class TaskService {
             System.out.println("Error: Failed to delete Task. Entity not found.");
         }
     }
-    public static void getAllTaks() {
+    public static void getAllTaks(Condition condition) {
         ArrayList<Task> tasks = null;
         ArrayList<Step> steps;
         Boolean hasStep = false;
@@ -235,6 +254,11 @@ public class TaskService {
         }
         System.out.println("All Tasks : ");
         for(Task task : tasks) {
+            if(condition == condition.incompelete) {
+                if(task.status == Task.Status.Completed) {
+                    continue;
+                }
+            }
             hasStep = true;
             try {
                 steps = Database.getStepsOfTask(task.id);
@@ -242,8 +266,6 @@ public class TaskService {
                 hasStep = false;
                 steps = new ArrayList<>();
             }
-            
-            
             System.out.println("---------------");
             System.out.println("ID       : " + task.id);
             System.out.println("Title    : " + task.title);
@@ -254,15 +276,15 @@ public class TaskService {
                 for (Step step : steps) {
                     System.out.println("+ " + step.title);
                     System.out.println("   ID     : " + step.id);
-                    System.out.println("   Status : " + step.status);
-                    
+                    System.out.println("   Status : " + step.status);       
                 }
             } else {
                 System.out.println("    NO steps");
             }
-
         }
-
+    }
+    public static void getInCompeleteTasks() {
+        getAllTaks(Condition.incompelete);
     }
     
 }
