@@ -57,14 +57,24 @@ public class TaskService {
         int id = scanner.nextInt();
         scanner.nextLine(); // consume newline
 
-        Entity entity = Database.get(id);
+        Entity entity = null;
+        try {
+            entity = Database.get(id);
+        } catch (EntityNotFoundException e) {
+            System.out.println("provided ID is not belong to a Task");
+            return;
+        } 
+
+        
         if (!(entity instanceof Task)) {
             System.out.println("Invalid ID provided. Entity is not a Task.");
         }
 
         Task task = (Task) entity;
+        Boolean update = false;
 
         while (true) {
+            update = false;
             System.out.println("Enter field to update: title / description / dueDate / status / exit");
             String choice = scanner.nextLine().trim();
 
@@ -72,10 +82,12 @@ public class TaskService {
                 case "title":
                     System.out.print("Enter new title: ");
                     task.title = scanner.nextLine();
+                    update = true;
                     break;
                 case "description":
                     System.out.print("Enter new description: ");
                     task.description = scanner.nextLine();
+                    update = true;
                     break;
                 case "status":
                     System.out.print("Enter new status (NoStarted / InProgres / Completed): ");
@@ -83,12 +95,15 @@ public class TaskService {
                     switch (statusInput) {
                         case "NoStarted":
                             task.status = Task.Status.NoStarted;
+                            update = true;
                             break;
                         case "InProgres":
                             task.status = Task.Status.InProgres;
+                            update = true;
                             break;
                         case "Completed":
                             task.status = Task.Status.Completed;
+                            update = true;
                             break;
                         default:
                             System.out.println("Invalid status input.");
@@ -105,6 +120,7 @@ public class TaskService {
                         System.out.println("Invalid date format.");
                         continue;
                     }
+                    update = true;
                     break;
                 case "exit":
                     return;
@@ -113,13 +129,22 @@ public class TaskService {
                     continue;
             }
 
-            try {
-                Database.update(task);
-                System.out.println("Task updated successfully.");
-            } catch (EntityNotFoundException e) {
-                System.out.println("Update failed: Task not found.");
-            } catch(InvalidEntityException e) {
-                System.out.println("Update failed");
+            if(update) {
+                System.out.println("Comfirm change ? (yes) / (NO)");
+                choice = scanner.nextLine().trim().toLowerCase();
+
+                if(choice.equals("yes")) {
+                    try {
+                        Database.update(task);
+                        System.out.println("Task updated successfully.");
+                    } catch (EntityNotFoundException e) {
+                        System.out.println("Update failed: Task not found.");
+                    } catch(InvalidEntityException e) {
+                        System.out.println("Update failed");
+                    } 
+                } else {
+                    System.out.println("update canceiled");
+                }   
             }
         }
     }

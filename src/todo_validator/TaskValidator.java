@@ -15,7 +15,7 @@ public class TaskValidator implements Validator{
         }
         // down Cast
         Task task = (Task)entity;
-        if(task.title.isEmpty()) {
+        if(task.title == null || task.title.trim().isEmpty()) {
             throw new InvalidEntityException("Invalid Step entity");
 
         }

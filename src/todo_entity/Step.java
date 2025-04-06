@@ -24,6 +24,7 @@ public class Step extends Entity{
     @Override
     public Entity copy() {
         Step stepCopy = new Step(title, status, taskRef);
+        stepCopy.id = id;
 
        return stepCopy;
     }

@@ -24,21 +24,22 @@ public final class Database {
 
     }
     public static void add(Entity entity) throws InvalidEntityException { 
-
-        Validator validator = validators.get(entity.getEntityCode());
+        
+        // THIS SHIT ISNT WORKING
+       /*  Validator validator = validators.get(entity.getEntityCode());
         if(validator == null) {
             throw new InvalidEntityException("No validator found for this Entity COde : " + entity.getEntityCode() + "\nPossible issue : Validator not added ");
-
-        }
+        }*/
     
-        validator.validate(entity);
+       // validator.validate(entity);
 
         if(entity instanceof Trackable) {
             Date date = new Date(System.currentTimeMillis());
             ((Trackable) entity).setCreationDate(date);
             ((Trackable) entity).setLastModificationDate(date);
         }
-        entity.id = ++idCounter;
+        ++idCounter;
+        entity.id = idCounter;
         entities.add(entity.copy());
 
     }
@@ -67,13 +68,14 @@ public final class Database {
     }
     // i dont recommend this update (your way)
     public static void update(Entity e) throws EntityNotFoundException, InvalidEntityException {
-        Validator validator = validators.get(e.getEntityCode());
+
+      /* Validator validator = validators.get(e.getEntityCode());
         if(validator == null) {
             throw new InvalidEntityException("No validator found for this Entity COde : " + e.getEntityCode() + "\nPossible issue : Validator not added ");
 
         }
-    
-        validator.validate(e);
+        validator.validate(e);*/
+
         for (int i = 0; i < entities.size(); i++) {
             if (entities.get(i).id == e.id) {
                 entities.set(i, e.copy()); 
@@ -90,6 +92,7 @@ public final class Database {
        throw new EntityNotFoundException();
     }
     public static void registerValidator(int entityCode, Validator validator) {
+        validators = new HashMap<>();
         if (validators.containsKey(entityCode)) {
             throw new IllegalArgumentException("validator for entity code " + entityCode + " already exists.");
         } else {

@@ -18,10 +18,13 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         Database.registerValidator(Task.TASK_ENTITY_CODE, new TaskValidator());
         Database.registerValidator(Step.STEP_ENTITY_CODE, new StepValidator());
+        
 
         // lets begin 
+        System.out.println("-------------------------------------");
+        System.out.println();
         while (true) {
-            System.out.println("choose an item : add task / add step / delete task / delete step / update task / update step / get task / exit");
+            System.out.println("choose an item : add task / add step / delete task / delete step / update task / update step / get task / show all tasks /exit");
             String choise = scanner.nextLine().trim().toLowerCase();
             switch (choise) {
                 case "add task" : TaskService.addTask(); break;
@@ -31,18 +34,12 @@ public class Main {
                 case "update task" : TaskService.updateTask(); break;
                 case "update step" : StepService.updateStep(); break;
                 case "get task" : TaskService.getTaskById(); break;
-                case "exit" : break;
+                case "show all tasks" : TaskService.getAllTaks(); break;
+                case "exit" : System.exit(0);;
                 default : System.out.println("inputed order is invalid"); continue;
 
             }
             
         }
-
-
-
-
-
     }
-
-
 }

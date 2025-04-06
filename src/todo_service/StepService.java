@@ -15,7 +15,9 @@ import todo_entity.Step;
 import todo_entity.Task;
 
 public class StepService {
+    
     private static Scanner scanner = new Scanner(System.in);
+
     public static void addStep() {
         System.out.println("----------------");
         System.out.println("Enter Task Id  :");
@@ -75,12 +77,12 @@ public class StepService {
         try {
             entity = Database.get(id);
         } catch (EntityNotFoundException e) {
-            System.out.println("❌ Entity not found: Invalid ID " + id);
+            System.out.println("Entity not found: Invalid ID " + id);
             return;
         }
     
         if (!(entity instanceof Step)) {
-            System.out.println("❌ Invalid ID provided. Entity is not a Step.");
+            System.out.println(" Invalid ID provided. Entity is not a Step.");
             return;
         }
     
@@ -100,7 +102,7 @@ public class StepService {
                     String newTitle = scanner.nextLine().trim();
     
                     if (newTitle.isEmpty()) {
-                        System.out.println("⚠️ Title cannot be empty.");
+                        System.out.println(" Title cannot be empty.");
                     } else {
                         step.title = newTitle;
                         update = true;
@@ -118,7 +120,7 @@ public class StepService {
                         step.status = Step.Status.Completed;
                         update = true;
                     } else {
-                        System.out.println("⚠️ Invalid status input.");
+                        System.out.println(" Invalid status input.");
                     }
                     break;
     
@@ -131,12 +133,12 @@ public class StepService {
                     try {
                         taskEntity = Database.get(taskID);
                     } catch (EntityNotFoundException e) {
-                        System.out.println("⚠️ Task not found: Invalid ID.");
+                        System.out.println(" Task not found: Invalid ID.");
                         break;
                     }
     
                     if (!(taskEntity instanceof Task)) {
-                        System.out.println("⚠️ Invalid ID: Not a Task entity.");
+                        System.out.println(" Invalid ID: Not a Task entity.");
                     } else {
                         step.taskRef = taskID;
                         update = true;
@@ -144,31 +146,31 @@ public class StepService {
                     break;
     
                 case "exit":
-                    System.out.println("👋 Exiting Step update.");
+                    System.out.println(" Exiting Step update.");
                     return;
     
                 default:
-                    System.out.println("⚠️ Unknown option. Try again.");
+                    System.out.println(" Unknown option. Try again.");
                     break;
             }
     
             if (update) {
-                System.out.print("✅ Confirm update? (yes/no): ");
+                System.out.print(" Confirm update? (yes/no): ");
                 String confirm = scanner.nextLine().trim().toLowerCase();
     
                 if (confirm.equals("yes") || confirm.equals("y")) {
                     try {
                         Database.update(step);
-                        System.out.println("🎉 Step updated successfully.");
+                        System.out.println(" Step updated successfully.");
                     } catch (EntityNotFoundException e) {
-                        System.out.println("❌ Update failed: Step not found.");
+                        System.out.println(" Update failed: Step not found.");
                         return;
                     } catch (InvalidEntityException e) {
-                        System.out.println("❌ Update failed: " + e.getMessage());
+                        System.out.println(" Update failed: " + e.getMessage());
                         return;
                     }
                 } else {
-                    System.out.println("❎ Update cancelled.");
+                    System.out.println(" Update cancelled.");
                 }
             }
         }
