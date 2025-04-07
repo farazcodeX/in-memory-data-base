@@ -16,6 +16,7 @@ import todo_validator.TaskValidator;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        
         Database.registerValidator(Task.TASK_ENTITY_CODE, new TaskValidator());
         Database.registerValidator(Step.STEP_ENTITY_CODE, new StepValidator());
         

@@ -112,15 +112,15 @@ public class TaskService {
                     System.out.print("Enter new status (NoStarted / InProgres / Complete): ");
                     String statusInput = scanner.nextLine().trim().toLowerCase();
                     switch (statusInput) {
-                        case "NoStarted":
+                        case "nostarted":
                             task.status = Task.Status.NoStarted;
                             update = true;
                             break;
-                        case "InProgres":
+                        case "inprogres":
                             task.status = Task.Status.InProgres;
                             update = true;
                             break;
-                        case "Complete":
+                        case "complete":
                             task.status = Task.Status.Completed;
                             update = true;
                             break;

@@ -11,6 +11,7 @@ public class TaskValidator implements Validator{
     @Override
     public void validate(Entity entity) throws InvalidEntityException {
         if(!(entity instanceof Task)) {
+            System.out.println("waht");
             throw new InvalidEntityException("Invalid entity inputed");
         }
         // down Cast

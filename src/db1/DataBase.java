@@ -15,7 +15,7 @@ import todo_validator.TaskValidator;
 public final class Database {
     
     private static List<Entity> entities = new ArrayList<>();
-    private static HashMap<Integer, Validator> validators;
+    private static HashMap<Integer, Validator> validators = new HashMap<>();
     private static int idCounter = 0;
 
     private Database() {
@@ -25,13 +25,12 @@ public final class Database {
     }
     public static void add(Entity entity) throws InvalidEntityException { 
         
-        // THIS SHIT ISNT WORKING
-       /*  Validator validator = validators.get(entity.getEntityCode());
+   
+        Validator validator = validators.get(entity.getEntityCode());
         if(validator == null) {
             throw new InvalidEntityException("No validator found for this Entity COde : " + entity.getEntityCode() + "\nPossible issue : Validator not added ");
-        }*/
-    
-       // validator.validate(entity);
+        }
+        validator.validate(entity);
 
         if(entity instanceof Trackable) {
             Date date = new Date(System.currentTimeMillis());
@@ -51,10 +50,8 @@ public final class Database {
         }
         // if entity not found
         throw new EntityNotFoundException();
-        
     }
     public static void delete(int id) throws EntityNotFoundException {
-
         for(Entity entity : entities) {
             if(entity.id == id) {
                 entities.remove(entity);
@@ -63,18 +60,16 @@ public final class Database {
         }
         // if not
         throw new EntityNotFoundException(id);
-
-
     }
     // i dont recommend this update (your way)
     public static void update(Entity e) throws EntityNotFoundException, InvalidEntityException {
 
-      /* Validator validator = validators.get(e.getEntityCode());
+       Validator validator = validators.get(e.getEntityCode());
         if(validator == null) {
             throw new InvalidEntityException("No validator found for this Entity COde : " + e.getEntityCode() + "\nPossible issue : Validator not added ");
 
         }
-        validator.validate(e);*/
+        validator.validate(e);
 
         for (int i = 0; i < entities.size(); i++) {
             if (entities.get(i).id == e.id) {
@@ -92,15 +87,14 @@ public final class Database {
        throw new EntityNotFoundException();
     }
     public static void registerValidator(int entityCode, Validator validator) {
-        validators = new HashMap<>();
+        
         if (validators.containsKey(entityCode)) {
             throw new IllegalArgumentException("validator for entity code " + entityCode + " already exists.");
         } else {
              validators.put(entityCode, validator);
-        }
-       
-        
+        } 
     }
+
     public static ArrayList<Entity> getAll(int entityCode) {
         // return all the entities with specified entityCode
         ArrayList<Entity> newList = new ArrayList<>();
@@ -115,6 +109,7 @@ public final class Database {
             throw new EntityNotFoundException();
         }  
     }
+
     public static ArrayList<Step> getStepsOfTask(int taskRef) {
         ArrayList<Step> steps = new ArrayList<>();
         for(Entity entity : entities) {
@@ -128,10 +123,9 @@ public final class Database {
         if(!steps.isEmpty()) {
             return steps;
         } 
-        throw new EntityNotFoundException();
-        
-        
+        throw new EntityNotFoundException();    
     }
+
     public static ArrayList<Task> getAllTaks() {
         ArrayList<Task> tasks = new ArrayList<>();
         for(Entity entity : entities) {
@@ -144,7 +138,6 @@ public final class Database {
             return tasks;
         } else {
             throw new EntityNotFoundException();
-        }
-        
+        }    
     }
 }
