@@ -1,10 +1,14 @@
 package todo_entity;
 
-import db1.Entity;
+import java.util.Date;
 
-public class Step extends Entity{
-    
-        
+import db1.Entity;
+import db1.Trackable;
+
+public class Step extends Entity implements Trackable{
+
+    private Date creationDate;
+    private Date lastModificationDate;        
     public static final int STEP_ENTITY_CODE = 8;
     public String title;
     public Status status;
@@ -32,5 +36,25 @@ public class Step extends Entity{
     @Override
     public int getEntityCode() {
         return STEP_ENTITY_CODE;
+    }
+
+    @Override
+    public void setCreationDate(Date date) {
+        creationDate = date;
+    }
+
+    @Override
+    public Date getCreationDate() {
+            return creationDate;
+    }
+
+    @Override
+    public void setLastModificationDate(Date date) {
+        lastModificationDate = date;
+    }
+
+    @Override
+    public Date getLastModificationDate() {
+        return lastModificationDate;
     }
 }

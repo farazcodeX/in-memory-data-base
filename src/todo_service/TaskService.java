@@ -1,7 +1,7 @@
 package todo_service;
 
 import java.nio.file.StandardOpenOption;
-import java.sql.Date;
+import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -52,31 +52,35 @@ public class TaskService {
 
     public static void addTask() {
         System.out.println("----------------------------");
+    
         System.out.print("Enter Task name: ");
         String title = scanner.nextLine();
+    
         System.out.print("Enter Task description: ");
         String description = scanner.nextLine();
-        // lets get the due date
-        System.out.println("Enter due Date in (xxxx-yy-zz) format");
-        String dueDateInput = scanner.nextLine();
-        Date dueDate = null;
+    
+        System.out.print("Enter due date (yyyy-MM-dd): ");
+        String dueDateInput = scanner.nextLine().trim();
+    
+        Date dueDate;
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             formatter.setLenient(false);
-            java.util.Date parsedDate = formatter.parse(dueDateInput);
-            dueDate = new Date(parsedDate.getTime()); 
+            dueDate = formatter.parse(dueDateInput);
         } catch (ParseException e) {
-            System.out.println("SomeThing went wrong : possible issue : Invalid date format provided");
+            System.out.println("Something went wrong: Invalid date format provided.");
             return;
-
         }
-
-        
+    
         Task task = new Task(title, description, dueDate, Task.Status.NoStarted);
-
+    
         try {
             Database.add(task);
             System.out.println("Task added successfully!");
+            // Optional: show date in proper format
+            System.out.println("Task added successfully");
+            System.out.println("ID : " + task.id);
+           
         } catch (InvalidEntityException e) {
             System.out.println("Cannot save Task. Possible issues with the Task entity.");
         }
@@ -104,8 +108,10 @@ public class TaskService {
 
         Task task = (Task) entity;
         Boolean update = false;
+        Boolean completeUPdate = false;
 
         while (true) {
+            completeUPdate = false;
             update = false;
             System.out.println("Enter field to update: title / description / dueDate / status / exit");
             String choice = scanner.nextLine().trim();
@@ -113,7 +119,7 @@ public class TaskService {
             switch (choice) {
                 case "title":
                     System.out.print("Enter new title: ");
-                    task.title = scanner.nextLine();
+                    task.title = scanner.nextLine().trim();
                     update = true;
                     break;
                 case "description":
@@ -122,38 +128,48 @@ public class TaskService {
                     update = true;
                     break;
                 case "status":
-                    System.out.print("Enter new status (NoStarted / InProgres / Complete): ");
+                    System.out.print("Enter new status (NotStarted / InProgres / Completed): ");
                     String statusInput = scanner.nextLine().trim().toLowerCase();
                     switch (statusInput) {
-                        case "nostarted":
+                        case "notstarted":
                             task.status = Task.Status.NoStarted;
                             update = true;
                             break;
                         case "inprogres":
-                            task.status = Task.Status.InProgres;
-                            update = true;
+                            if(task.status != Task.Status.InProgres) {
+                                task.status = Task.Status.InProgres;
+                                update = true;
+                                break;
+                            } else {
+                                System.out.println("[ERROR] : Task is already Inproges . Try other changes ");
+                            }
+
+                        case "completed":
+                            if(task.status != Task.Status.Completed) {
+                                task.status = Task.Status.Completed;
+                                completeUPdate = true;
+                                update = true;
+                            } else {
+                                System.out.println("[ERROR] : Task is already Completed");
+                            }
                             break;
-                        case "complete":
-                            task.status = Task.Status.Completed;
-                            // lets make all of tasks complete
-                            setAsCompletedAllSteps(task.id);
-                            update = true;
-                            break;
+                        
                         default:
-                            System.out.println("Invalid status input.");
+                            System.err.println("[ERROR] : Invalid status input.");
                             continue;
                     }
                     break;
                 case "dueDate":
                     System.out.print("Enter new due date (yyyy-MM-dd): ");
-                    String dateStr = scanner.nextLine();
+                    String dueDateInput = scanner.nextLine();
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    
+                    
                     try {
-                        LocalDate localDate = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                        task.dueDate = Date.valueOf(localDate);
-                    } catch (DateTimeParseException e) {
-                        System.out.println("Invalid date format.");
-                        continue;
-                    }
+                        formatter.setLenient(false);
+                        task.dueDate = formatter.parse(dueDateInput);
+                    } catch (ParseException e) {System.err.println("Update Failed : possible issues : parse " );}
+
                     update = true;
                     break;
                 case "exit":
@@ -172,9 +188,9 @@ public class TaskService {
                         Database.update(task);
                         System.out.println("Task updated successfully.");
                     } catch (EntityNotFoundException e) {
-                        System.out.println("Update failed: Task not found.");
+                        System.err.println("[ERROR] : Update failed: Task not found.");
                     } catch(InvalidEntityException e) {
-                        System.out.println("Update failed");
+                        System.err.println("[ERROR] : Update failed : " + e.getMessage());
                     } 
                 } else {
                     System.out.println("update canceiled");
@@ -194,7 +210,7 @@ public class TaskService {
         try {
             Entity entity = Database.get(id);
             if (!(entity instanceof Task)) {
-                System.out.println("Entity found is not a Task.");
+                System.err.println("[ERROE] : ID provided does not belong to a Task");
                 return;
             }
             task = (Task) entity;
@@ -214,7 +230,8 @@ public class TaskService {
         System.out.println("-------------");
         System.out.println("ID       : " + id);
         System.out.println("Title    : " + task.title);
-        System.out.println("Due Date : " + task.dueDate);
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+        System.out.println(" Due Date: " + outputFormat.format(task.dueDate));
         System.out.println("Status   : " + task.status);
     
         
@@ -286,7 +303,8 @@ public class TaskService {
             System.out.println("---------------");
             System.out.println("ID       : " + task.id);
             System.out.println("Title    : " + task.title);
-            System.out.println("Due Date : " + task.dueDate);
+            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+            System.out.println(" Due Date: " + outputFormat.format(task.dueDate));
             System.out.println("Status   : " + task.status);
             if(hasStep) {
                 System.out.println("Steps:");

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import db1.Database;
@@ -44,7 +45,10 @@ public class StepService {
 
         try {
             Database.add(step);
+            System.out.println("-------------------------");
             System.out.println("Step added successfully");
+            System.out.println("ID : " + step.id);
+            System.out.println("Creation Date : " + step.getCreationDate());
             
         } catch (InvalidEntityException e) {
             System.out.println("Cannot Save Step : Possible issues : Invalid TaskID / empy title");   
@@ -71,7 +75,6 @@ public class StepService {
             System.out.println("Error: The ID does not correspond to a Step.");
             return;
         }
-
 
         try {
             Database.delete(id);
@@ -102,6 +105,8 @@ public class StepService {
         }
     
         Step step = (Step) entity;
+        List<String> changes = new ArrayList<>();
+
     
         while (true) {
             System.out.println("\nChoose a field to update:");
@@ -110,49 +115,56 @@ public class StepService {
             String choice = scanner.nextLine().trim().toLowerCase();
     
             boolean update = false;
+            Boolean completeChange = false;
     
             switch (choice) {
                 case "title":
+                    changes.add("Old title : " + step.title);
                     System.out.print("Enter new title: ");
-                    String newTitle = scanner.nextLine().trim();
-    
-                    if (newTitle.isEmpty()) {
-                        System.out.println(" Title cannot be empty.");
-                    } else {
-                        step.title = newTitle;
-                        update = true;
-                    }
+                    step.title = scanner.nextLine().trim();
+                    changes.add("New Title : " + step.title);
+                    update = true;
                     break;
-    
-                case "status":
-                    System.out.print("Enter new status (NotStarted / Completed): ");
-                    String statusInput = scanner.nextLine().trim().toLowerCase();
-    
-                    if (statusInput.equalsIgnoreCase("notstarted")) {
-                        if(step.status != Step.Status.NoStarted) {
-                            step.status = Step.Status.NoStarted;
-                           update = true;
-                        } else {
-                            System.out.println("Step is already not started : try other cahnges");
-                        }
-                    } else if (statusInput.equalsIgnoreCase("completed")) {
-                        if(step.status != Step.Status.Completed) {
-                            step.status = Step.Status.Completed;
-                            makeTaskInProgres(step.taskRef);
-                            update = true;
-                        } else {
-                            System.out.println("Step is already complited");
-                        }
 
-                    } else {
-                        System.out.println(" Invalid status input.");
+                    case "status":
+                    changes.add("Old status : " + step.status.name());
+                    System.out.print("Enter new status (NotStarted / Completed): ");
+                    String status = scanner.nextLine().trim().toLowerCase();
+                
+                    switch (status) {
+                        case "notstarted":
+                            if (step.status != Step.Status.NoStarted) {
+                                changes.add("new Status : " + status);
+                                step.status = Step.Status.NoStarted;
+                                update = true;
+                            } else {
+                                System.out.println("Step is already not started : try other changes");
+                            }
+                            break;
+                
+                        case "completed":
+                            if (step.status != Step.Status.Completed) {
+                                step.status = Step.Status.Completed;
+                                changes.add("new Status : " + status);
+                                completeChange = true;
+                                update = true;
+                            } else {
+                                System.out.println("Step is already completed");
+                            }
+                            break;
+                
+                        default:
+                            System.out.println("Invalid status input.");
+                            break;
                     }
                     break;
-    
+                
                 case "task id":
+                    changes.add("Old Task reference :" + step.taskRef);
                     System.out.print("Enter new Task ID: ");
                     int taskID = scanner.nextInt();
                     scanner.nextLine(); // consume newline
+                    changes.add("New Task reference : " + step.taskRef);
     
                     Entity taskEntity;
                     try {
@@ -163,7 +175,7 @@ public class StepService {
                     }
     
                     if (!(taskEntity instanceof Task)) {
-                        System.out.println(" Invalid ID: Not a Task entity.");
+                        System.out.println(" Invalid ID: id is not belong to a Task");
                     } else {
                         step.taskRef = taskID;
                         update = true;
@@ -183,12 +195,19 @@ public class StepService {
                 System.out.print(" Confirm update? (yes/no): ");
                 String confirm = scanner.nextLine().trim().toLowerCase();
     
-                if (confirm.equals("yes") || confirm.equals("y")) {
+                if (confirm.equals("yes")) {
                     try {
                         Database.update(step);
                         // lets check if all of steps are complete or no
                         taskCompleteChecker(step.taskRef);
                         System.out.println(" Step updated successfully.");
+                        System.out.println("ID :  " + step.id);
+                        if(!changes.isEmpty()) {
+                            System.out.println(changes.get(0));
+                            System.out.println(changes.get(1));
+                        }
+                        System.out.println(step.getLastModificationDate());
+                        
                     } catch (EntityNotFoundException e) {
                         System.out.println(" Update failed: Step not found.");
                         return;
@@ -198,37 +217,12 @@ public class StepService {
                     }
                 } else {
                     System.out.println(" Update cancelled.");
+                    changes.clear();
                 }
             }
         }
     }
 
-   /*  public static void setAsCompleted(int stepId, int counter) {
-        
-        Entity entity = null;
-        try {
-            entity = Database.get(stepId);
-        } catch (EntityNotFoundException e) {
-            System.out.println("Something went wrong: Invalid step ID passed to setAsCompleted.");
-            return;
-        }
-        
-        if (!(entity instanceof Step)) {
-            System.out.println("Error: The ID does not correspond to a Step.");
-            return;
-        }
-
-        Step step = (Step)entity;
-        step.status = Step.Status.Completed;
-        try {
-            Database.update(step);
-            System.out.println("Step" + counter + " : marked as completed.");
-        } catch (EntityNotFoundException e) {
-            System.out.println("Error: Step not found during update.");
-        } catch (InvalidEntityException e) {
-            System.out.println("Something went wrong");
-        }
-    }*/
     public static void taskCompleteChecker(int taskRef) {
         Boolean allComplte = true;
         ArrayList<Step> steps = new ArrayList<>();
@@ -247,7 +241,6 @@ public class StepService {
             if(allComplte) {
                 TaskService.setAsCompleted(taskRef);
             }
- 
         }
     }
     public static void makeTaskInProgres(int taskid) {
@@ -273,7 +266,6 @@ public class StepService {
                System.out.println("unkown erroe");
             }
         }
-
     }
 }
     

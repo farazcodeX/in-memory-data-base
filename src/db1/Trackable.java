@@ -1,6 +1,6 @@
 package db1;
 
-import java.sql.Date;
+import java.util.Date;
 
 public interface Trackable {
    void setCreationDate(Date date);

@@ -1,6 +1,6 @@
 package example;
 
-import java.sql.Date;
+import java.util.Date;
 
 import db1.Entity;
 import db1.Trackable;

@@ -3,8 +3,12 @@ package db1;
 import java.util.ArrayList;
 import java.lang.annotation.ElementType;
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
+
 import dbException.*;
 import todo_entity.Step;
 import todo_entity.Task;
@@ -30,9 +34,18 @@ public final class Database {
         validator.validate(entity);
 
         if(entity instanceof Trackable) {
-            Date date = new Date(System.currentTimeMillis());
-            ((Trackable) entity).setCreationDate(date);
-            ((Trackable) entity).setLastModificationDate(date);
+            Date currentDate = new Date(System.currentTimeMillis());
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+03:30"));
+            String formattedDate = sdf.format(currentDate);
+            try {
+                
+                ((Trackable) entity).setCreationDate(sdf.parse(formattedDate));
+                ((Trackable) entity).setLastModificationDate(sdf.parse(formattedDate));
+            } catch (ParseException e) {
+                
+            }
+
         }
         ++idCounter;
         entity.id = idCounter;
@@ -58,22 +71,28 @@ public final class Database {
         throw new EntityNotFoundException(id);
     }
     
-    public static void update(Entity e) throws EntityNotFoundException, InvalidEntityException {
+    public static void update(Entity entity) throws EntityNotFoundException, InvalidEntityException {
 
-       Validator validator = validators.get(e.getEntityCode());
+       Validator validator = validators.get(entity.getEntityCode());
         if(validator == null) {
-            throw new InvalidEntityException("No validator found for this Entity COde : " + e.getEntityCode() + "\nPossible issue : Validator not added ");
+            throw new InvalidEntityException("No validator found for this Entity COde : " + entity.getEntityCode() + "\nPossible issue : Validator not added ");
         }
-        validator.validate(e);
+        validator.validate(entity);
 
         for (int i = 0; i < entities.size(); i++) {
-            if (entities.get(i).id == e.id) {
-                entities.set(i, e.copy()); 
+            if (entities.get(i).id == entity.id) {
+                 
 
-                if(e instanceof Trackable) {
-                    Date date = new Date(System.currentTimeMillis());
-                    ((Trackable) e).setLastModificationDate(date);
+                if(entity instanceof Trackable) {
+                    Date currentDate = new Date(System.currentTimeMillis());
+                    SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+                    sdf.setTimeZone(TimeZone.getTimeZone("GMT+03:30"));
+                    String formattedDate = sdf.format(currentDate);
+                    try {
+                        ((Trackable) entity).setLastModificationDate(sdf.parse(formattedDate));
+                    } catch (ParseException e) {}
                 }
+                entities.set(i, entity.copy());
                 return; 
             }
         }
@@ -121,7 +140,7 @@ public final class Database {
         throw new EntityNotFoundException();    
     }
     // also mine
-    public static ArrayList<Task> getAllTaks() {
+   public static ArrayList<Task> getAllTaks() {
         ArrayList<Task> tasks = new ArrayList<>();
         for(Entity entity : entities) {
             if(entity instanceof Task) {
