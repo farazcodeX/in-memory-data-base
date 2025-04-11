@@ -1,5 +1,6 @@
 package todo_service;
 
+import java.nio.file.StandardOpenOption;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,13 +18,22 @@ import todo_entity.Step;
 import todo_entity.Task;
 
 public class TaskService {
+
+    static Scanner scanner = new Scanner(System.in);
+
     public enum Condition {
         all, incompelete
     }
-    static Scanner scanner = new Scanner(System.in);
 
-    public static void setAsCompleted(int taskId) throws InvalidEntityException {
-        Entity entity = Database.get(taskId);
+    public static void setAsCompleted(int taskId) {
+        Entity entity = null;
+        try {
+             entity = Database.get(taskId);
+        } catch (EntityNotFoundException e) {
+            System.out.println("No Entity found with : ID : " + taskId);
+            return;
+        }
+        
         if (!(entity instanceof Task)) {
             System.out.println("Error: The ID does not correspond to a Task.");
             return;
@@ -32,9 +42,11 @@ public class TaskService {
         task.status = Task.Status.Completed;
         try {
             Database.update(task);
-            System.out.println("Task marked as completed.");
+            System.out.println("Task : " + task.title + "  ID : " + task.id + "  : marked as completed 100%");
         } catch (EntityNotFoundException e) {
             System.out.println("Error: Task not found during update.");
+        } catch (InvalidEntityException e) {
+      
         }
     }
 
@@ -87,6 +99,7 @@ public class TaskService {
         
         if (!(entity instanceof Task)) {
             System.out.println("Invalid ID provided. Entity is not a Task.");
+            return;
         }
 
         Task task = (Task) entity;
@@ -122,6 +135,8 @@ public class TaskService {
                             break;
                         case "complete":
                             task.status = Task.Status.Completed;
+                            // lets make all of tasks complete
+                            setAsCompletedAllSteps(task.id);
                             update = true;
                             break;
                         default:
@@ -215,6 +230,7 @@ public class TaskService {
         }
     }
     public static void deleteTask() {
+
         System.out.println("---------------");
         System.out.print("Enter Task ID: ");
         int id = scanner.nextInt();
@@ -241,6 +257,7 @@ public class TaskService {
             System.out.println("Error: Failed to delete Task. Entity not found.");
         }
     }
+
     public static void getAllTaks(Condition condition) {
         ArrayList<Task> tasks = null;
         ArrayList<Step> steps;
@@ -286,5 +303,38 @@ public class TaskService {
     public static void getInCompeleteTasks() {
         getAllTaks(Condition.incompelete);
     }
-    
+
+    public static void setAsCompletedAllSteps(int id) {
+        ArrayList<Step> steps = null;
+        try {
+             steps = Database.getStepsOfTask(id);
+        } catch(EntityNotFoundException e) {
+            steps = new ArrayList<>();
+        }
+
+        if(steps.isEmpty()) {
+            System.out.println("This task has no steps.");
+            return;
+        } 
+        
+            int stepCounter = 1;
+            for(Step step : steps) {
+
+                if(step.status != Step.Status.Completed) {
+                    // we cahnge and update status here 
+                    step.status = Step.Status.Completed;
+                    try {
+                        System.out.println("updating step : ID " + step.id);
+                        Database.update(step);
+                        System.out.println("Step : " + stepCounter + " Completed successFully");
+                        ++stepCounter;
+                    } catch (EntityNotFoundException | InvalidEntityException e) {
+                        System.out.println("Failed to apply update");
+                        return;
+
+                    }
+                }
+            }
+            System.out.println("All steps have been marked as Completed. 100%");
+    }
 }

@@ -18,14 +18,11 @@ public final class Database {
     private static HashMap<Integer, Validator> validators = new HashMap<>();
     private static int idCounter = 0;
 
-    private Database() {
-       //"Making a class constructor private will prevent the class from being instantiated."
-      // classes like Math in java is like this
+    private Database() {}
 
-    }
+
     public static void add(Entity entity) throws InvalidEntityException { 
         
-   
         Validator validator = validators.get(entity.getEntityCode());
         if(validator == null) {
             throw new InvalidEntityException("No validator found for this Entity COde : " + entity.getEntityCode() + "\nPossible issue : Validator not added ");
@@ -40,7 +37,6 @@ public final class Database {
         ++idCounter;
         entity.id = idCounter;
         entities.add(entity.copy());
-
     }
     public static Entity get(int id) throws EntityNotFoundException {
         for(Entity entity : entities) {
@@ -61,13 +57,12 @@ public final class Database {
         // if not
         throw new EntityNotFoundException(id);
     }
-    // i dont recommend this update (your way)
+    
     public static void update(Entity e) throws EntityNotFoundException, InvalidEntityException {
 
        Validator validator = validators.get(e.getEntityCode());
         if(validator == null) {
             throw new InvalidEntityException("No validator found for this Entity COde : " + e.getEntityCode() + "\nPossible issue : Validator not added ");
-
         }
         validator.validate(e);
 
@@ -82,7 +77,6 @@ public final class Database {
                 return; 
             }
         }
-
         // if not found
        throw new EntityNotFoundException();
     }
@@ -96,7 +90,7 @@ public final class Database {
     }
 
     public static ArrayList<Entity> getAll(int entityCode) {
-        // return all the entities with specified entityCode
+        
         ArrayList<Entity> newList = new ArrayList<>();
         for(Entity entity : entities) {
             if(entity.getEntityCode() == entityCode) {
@@ -109,8 +103,9 @@ public final class Database {
             throw new EntityNotFoundException();
         }  
     }
-
+    // this is mine
     public static ArrayList<Step> getStepsOfTask(int taskRef) {
+
         ArrayList<Step> steps = new ArrayList<>();
         for(Entity entity : entities) {
             if(entity instanceof Step) {
@@ -125,7 +120,7 @@ public final class Database {
         } 
         throw new EntityNotFoundException();    
     }
-
+    // also mine
     public static ArrayList<Task> getAllTaks() {
         ArrayList<Task> tasks = new ArrayList<>();
         for(Entity entity : entities) {

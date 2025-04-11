@@ -15,7 +15,7 @@ public class Human extends Entity {
     public Human copy() {
         Human copyHuman = new Human(name, age);
         copyHuman.id = id;        
-    
+
         return copyHuman;
     }
 

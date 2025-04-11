@@ -15,9 +15,5 @@ public class HumanValidator implements Validator{
         if(human.age < 0 || human.name.isEmpty()) {
             throw new InvalidEntityException("Invalid human entity");
         }
-
-
     }
-
-    
 }

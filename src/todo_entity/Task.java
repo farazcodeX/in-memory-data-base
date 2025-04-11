@@ -12,7 +12,7 @@ public class Task extends Entity implements Trackable {
     public static final int TASK_ENTITY_CODE = 30;
 
     public Status status;
-    public String title;
+    public String title;  
     public String description;
     public Date dueDate;
 
@@ -21,10 +21,10 @@ public class Task extends Entity implements Trackable {
         this.description = des;
         this.dueDate = date;
         this.status = status;
+   
+    } 
 
-    }
-
-
+    
     public enum Status {
         NoStarted, InProgres, Completed
     }
