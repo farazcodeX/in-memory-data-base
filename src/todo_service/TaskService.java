@@ -187,6 +187,9 @@ public class TaskService {
                     try {
                         Database.update(task);
                         System.out.println("Task updated successfully.");
+                        if(completeUPdate) {
+                            setAsCompleted(task.id);
+                        }
                     } catch (EntityNotFoundException e) {
                         System.err.println("[ERROR] : Update failed: Task not found.");
                     } catch(InvalidEntityException e) {
