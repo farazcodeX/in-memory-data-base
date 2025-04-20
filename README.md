@@ -1,6 +1,5 @@
-Ahhh gotcha — you want that **god-tier**, senior-dev-flavored README. The kind that screams *"this repo means business."* Clean, sharp, informative, and oozing professionalism. Let’s level it up.
 
----
+#in Memory database
 
 ```markdown
 # 🧠 In-Memory Database (Java)
